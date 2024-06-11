@@ -1,0 +1,12 @@
+2024-06-10 18:57:44,982 - codeCompareLogger - INFO - Code Comparison:
+**Revised Code:** 10/10
+- It follows the PEP8 style guide.
+- It uses a docstring to document the function.
+- It checks for invalid input and raises a ValueError if necessary.
+- It calculates the surface area correctly.
+
+**Actual Code:** 8/10
+- It does not follow the PEP8 style guide (e.g., missing spaces around operators).
+- It does not use a docstring to document the function.
+- It does not check for invalid input and may produce incorrect results for negative values of radius or height.
+- It calculates the surface area correctly.
