@@ -33,18 +33,21 @@ GOOGLE_API_KEY=your_google_api_key
 
 ### Reviewer
 
-Run the `main.py` script to generate the code review process. You must describe the problem in quotation marks. Optionally you can include a file containing the code to be reviewed.
+Run the `main.py` script to generate the code review process. You must describe the problem in quotation marks. Optionally you can include a file containing the code to be reviewed. Here is an example
 
 ```sh
-python src/main.py
+python src/main.py "How do I create a simple publisher node in ROS2 using Python?"
 ```
 
-Include the following lines in your `.bashrc` file:
+````sh
+python src/main.py "Review the cylinder_area function" area_example.py
+
+Include the following lines in your `.bashrc` file with the correct path to `main.py`:
 
 ```sh
-export CODE_REVIEWER_PATH="$HOME/ma-code-reviewer/src/main.py"
+export CODE_REVIEWER_PATH="{path_to_main.py}/main.py"
 alias cr="python \$CODE_REVIEWER_PATH"
-```
+````
 
 Then run,
 
