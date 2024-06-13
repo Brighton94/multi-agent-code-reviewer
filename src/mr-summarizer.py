@@ -1,5 +1,4 @@
 from dotenv import load_dotenv
-import google.generativeai as genai
 import subprocess
 import os
 import google.generativeai as genai
@@ -12,16 +11,20 @@ GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 if not GOOGLE_API_KEY:
     raise ValueError("No GOOGLE_API_KEY provided")
 
+genai.configure(api_key=GOOGLE_API_KEY)
+model = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=GOOGLE_API_KEY)
+
 style = """American English  \
          formal  \
-         in bullet points \ """
+         in bullet points \
+         """
+
+
+def llm(x):
+    return model.invoke(x).content
 
 
 def main():
-
-    genai.configure(api_key=GOOGLE_API_KEY)
-    model = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=GOOGLE_API_KEY)
-
     # 1: Extract Git Changes
     subprocess.run(
         ["git", "diff", "HEAD~1", "HEAD", "-U0"], stdout=open("changes.diff", "w")
@@ -34,5 +37,8 @@ def main():
     # 3: Summarize Using an LLM
     prompt = f"Summarize the following git changes for my colleagues from the previous merge request:\n\n{git_changes} into a style that is {style}"
 
-    response = model.generate_content(prompt)
-    print(response.text)
+    response = llm(prompt)
+    print(response)
+
+
+main()
