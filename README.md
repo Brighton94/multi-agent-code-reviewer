@@ -39,15 +39,18 @@ Run the `main.py` script to generate the code review process. You must describe 
 python src/main.py "How do I create a simple publisher node in ROS2 using Python?"
 ```
 
-````sh
+or
+
+```sh
 python src/main.py "Review the cylinder_area function" area_example.py
+```
 
 Include the following lines in your `.bashrc` file with the correct path to `main.py`:
 
 ```sh
 export CODE_REVIEWER_PATH="{path_to_main.py}/main.py"
 alias cr="python \$CODE_REVIEWER_PATH"
-````
+```
 
 Then run,
 
