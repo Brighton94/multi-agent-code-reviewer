@@ -33,7 +33,7 @@ GOOGLE_API_KEY=your_google_api_key
 
 ### Reviewer
 
-Run the `main.py` script to generate the code review process. You must describe the problem in quotation marks. Optionally you can include a file containing the code to be reviewed. Here is an example
+Run the `main.py` script to generate the code review process. You must describe the problem in quotation marks. Optionally you can include a file containing the code to be reviewed. Here are examples
 
 ```sh
 python src/main.py "How do I create a simple publisher node in ROS2 using Python?"
