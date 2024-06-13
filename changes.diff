@@ -1,0 +1,9 @@
+diff --git a/.env b/.env
+deleted file mode 100644
+index 99c1275..0000000
+--- a/.env
++++ /dev/null
+@@ -1,2 +0,0 @@
+-GOOGLE_API_KEY=AIzaSyCBc4c1LiR7kzRoZC-ydL9V3h2gFq5oM5U
+-OPENAI_API_KEY=sk-proj-YPKu3GzON123RxYOeMiiT3BlbkFJHChS7aPEZ0NMFjE04Xlo
+\ No newline at end of file
