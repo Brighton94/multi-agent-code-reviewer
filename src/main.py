@@ -134,7 +134,7 @@ def main():
         "file", type=str, nargs="?", help="Optional file containing the code to review."
     )
     parser.add_argument(
-        "--save", type=str, default=".", help="Directory to save log files."
+        "--save", type=str, default="src/log", help="Directory to save log files."
     )
 
     args = parser.parse_args()
