@@ -18,52 +18,89 @@ if not GOOGLE_API_KEY:
 genai.configure(api_key=GOOGLE_API_KEY)
 model = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=GOOGLE_API_KEY)
 
-# style = """American English  \
-#          formal  \
-#          in bullet points \
-#          """
-
 
 class Style(BaseModel):
-    language: Optional[str]
-    formality: Optional[str]
-    bullet_points: Optional[bool]
+    language: Optional[str] = "English"
+    formality: Optional[str] = "Professional"
+    bullet_points: Optional[bool] = True
+    tone: Optional[str] = "Neutral"
+    detail_level: Optional[str] = "Detailed"
+    audience: Optional[str] = "Technical team"
+    structure: Optional[str] = "Big picture, Detailed changes"
+    emphasis: Optional[str] = "New features, bug fixes"
+    length: Optional[str] = "Medium"
 
 
 parser = PydanticOutputParser(pydantic_object=Style)
 
 
-# def llm(x):
-#     return model.invoke(x).content
+def check_git_repo():
+    try:
+        subprocess.run(
+            ["git", "rev-parse", "--is-inside-work-tree"],
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+    except subprocess.CalledProcessError:
+        print("Error: This is not a git repository.")
+        exit(1)
+
+
+def extract_git_changes():
+    try:
+        subprocess.run(
+            ["git", "diff", "HEAD~1", "HEAD", "-U0"],
+            check=True,
+            stdout=open("changes.diff", "w"),
+        )
+    except subprocess.CalledProcessError as e:
+        print("Error extracting git changes:", e)
+        exit(1)
+
+
+def read_git_changes():
+    try:
+        with open("changes.diff", "r") as file:
+            return file.read()
+    except FileNotFoundError:
+        print("Error: 'changes.diff' file not found.")
+        exit(1)
 
 
 def main():
-    # 1: Extract Git Changes
-    subprocess.run(
-        ["git", "diff", "HEAD~1", "HEAD", "-U0"], stdout=open("changes.diff", "w")
+    check_git_repo()
+    extract_git_changes()
+    git_changes = read_git_changes()
+
+    style = Style()
+    format_instructions = parser.get_format_instructions(style)
+
+    template = (
+        f"Summarize the following git changes for my colleagues since the last merge request:\n\n{git_changes}\n\n"
+        f"Language: {style.language}\n"
+        f"Formality: {style.formality}\n"
+        f"Bullet Points: {style.bullet_points}\n"
+        f"Tone: {style.tone}\n"
+        f"Detail Level: {style.detail_level}\n"
+        f"Audience: {style.audience}\n"
+        f"Structure: {style.structure}\n"
+        f"Emphasis: {style.emphasis}\n"
+        f"Length: {style.length}\n\n"
+        f"{format_instructions}"
     )
-
-    # 2: Read the Git Changes
-    with open("changes.diff", "r") as file:
-        git_changes = file.read()
-
-    # 3: Summarize Using an LLM
-    # prompt = f"Summarize the following git changes for my colleagues since the last merge request:\n\n{git_changes} into a style that is {style}"
-
-    template = f"Summarize the following git changes for my colleagues since the last merge request:\n\n{git_changes}"
 
     prompt = PromptTemplate(
         template=template,
         input_variables=["git_changes"],
-        partial_variables={"format_instructions": parser.get_format_instructions()},
+        partial_variables={"format_instructions": format_instructions},
     )
 
-    # response = llm(prompt)
-
     prompt_and_model = prompt | model
-    response = prompt_and_model.invoke({"git changes": git_changes})
+    response = prompt_and_model.invoke({"git_changes": git_changes})
 
     print(response.content)
 
 
-main()
+if __name__ == "__main__":
+    main()

@@ -6,7 +6,7 @@ This project uses LLMs to summarize Git changes and assist in code reviews.
 
 ### Prerequisites
 
-- Python 3.8 or higher
+- Python 3.9 or higher
 - Google API Key
 
 ### Installation
@@ -17,7 +17,7 @@ This project uses LLMs to summarize Git changes and assist in code reviews.
 git clone http://lu-plm-actualitas.csir.co.za/software-sig/code-reviewer.git
 ```
 
-2. Install the required Python packages:
+2. Install the required Python packages (in a conda env or virtual env):
 
 ```sh
 pip install -r requirements.txt
@@ -33,10 +33,10 @@ GOOGLE_API_KEY=your_google_api_key
 
 ### Reviewer
 
-Run the `main.py` script to generate the code review process. You must describe the problem in quotation marks. Optionally you can include a file containing the code to be reviewed. Here are examples
+Run the `main.py` script to generate the code review process. You must describe the problem in quotation marks. Optionally you can include a file containing the code to be reviewed. The default specialization of the reviewer is python, you at the moment, you can specify the specialization with this flag `--specialization=python` (`javascript`, `cpp` or `typescript`). Here are some examples of the usage:
 
 ```sh
-python src/main.py "How do I create a simple publisher node in ROS2 using Python?"
+python src/main.py "How do I create a simple publisher node in ROS2?"
 ```
 
 or
@@ -49,6 +49,7 @@ Include the following lines in your `.bashrc` file with the correct path to `mai
 
 ```sh
 export CODE_REVIEWER_PATH="{path_to_main.py}/main.py"
+export DEFAULT_SPECIALIZATION="python"  # Set your default specialization her
 alias cr="python \$CODE_REVIEWER_PATH"
 ```
 
@@ -67,6 +68,23 @@ Run the `mr-summarizer.py` script to generate a summary of the Git changes since
 ```sh
 python src/mr-summarizer.py
 ```
+
+You can also add these lines to the `.bashrc` file:
+
+```sh
+export MR_SUMMARIZER_PATH="$HOME/ma-code-reviewer/src/mr-summarizer.py"
+alias mrs="python \$MR_SUMMARIZER_PATH"
+```
+
+After updating the `.bashrc` file, make sure to source it to apply the changes:
+
+```sh
+source ~/.bashrc
+```
+
+You just need to be in a git repository and run `mrs` in the terminal.
+
+**N.B:** These commands do not work inside docker containers. They would need to be echoed in someway.
 
 ## Contributing
 
