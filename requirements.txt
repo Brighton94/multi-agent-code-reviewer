@@ -1,0 +1,6 @@
+langgraph
+httpx
+langchain_google_genai
+python-dotenv
+openai
+google-generativeai
