@@ -1,25 +1,12 @@
 import argparse
-from typing import Dict, TypedDict, Optional
+from typing import TypedDict, Optional
 from langgraph.graph import StateGraph, END
-import random
-import time
 import os
-from dotenv import load_dotenv
 import logger_setup
+from prompts import prompts
+from langchain_ollama import ChatOllama
 
-import google.generativeai as genai
-from langchain_google_genai import ChatGoogleGenerativeAI
-
-# Load environment variables from .env file
-load_dotenv()
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-
-if not GOOGLE_API_KEY:
-    raise ValueError("No GOOGLE_API_KEY provided")
-
-genai.configure(api_key=GOOGLE_API_KEY)
-model = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=GOOGLE_API_KEY)
-
+model = ChatOllama(model="llama3.2", temperature=0)
 
 def llm(x):
     return model.invoke(x).content
@@ -38,24 +25,6 @@ class GraphState(TypedDict):
 
 workflow = StateGraph(GraphState)
 
-reviewer_start = "You are Code reviewer specialized in {}.\
-You need to review the given code following PEP8 guidelines and potential bugs\
-and point out issues as bullet list.\
-Code:\n {}"
-
-coder_start = "You are a Coder specialized in {}.\
-Improve the given code given the following guidelines. Guideline:\n {} \n \
-Code:\n {} \n \
-Output just the improved code and nothing else."
-
-rating_start = "Rate the skills of the coder on a scale of 10 given the Code review cycle with a short reason.\
-Code review:\n {} \n "
-
-code_comparison = "Compare the two code snippets and rate on a scale of 10 to both. Don't output the codes. Revised Code: \n {} \n Actual Code: \n {}"
-
-classify_feedback = "Are all feedback mentioned resolved in the code? Output just Yes or No.\
-Code: \n {} \n Feedback: \n {} \n"
-
 
 def handle_reviewer(state):
     history = state.get("history", "").strip()
@@ -65,7 +34,7 @@ def handle_reviewer(state):
 
     print("Reviewer working...")
 
-    feedback = llm(reviewer_start.format(specialization, code))
+    feedback = llm(prompts[specialization]["reviewer_start"].format(code))
 
     return {
         "history": history + "\n REVIEWER:\n" + feedback,
@@ -82,20 +51,25 @@ def handle_coder(state):
 
     print("CODER rewriting...")
 
-    code = llm(coder_start.format(specialization, feedback, code))
+    code = llm(prompts[specialization]["coder_start"].format(feedback, code))
     return {"history": history + "\n CODER:\n" + code, "code": code}
 
 
 def handle_result(state):
+    """Handle the final result, compute rating, and comparison."""
     print("Review done...")
 
+    # Extract necessary information from the state
     history = state.get("history", "").strip()
     code1 = state.get("code", "").strip()
     code2 = state.get("actual_code", "").strip()
-    rating = llm(rating_start.format(history))
+    specialization = state.get("specialization", "").strip()
 
-    code_compare = llm(code_comparison.format(code1, code2))
+    rating = llm(prompts[specialization]["rating_start"].format(history))
+    
+    code_compare = llm(prompts[specialization]["code_comparison"].format(code1, code2))
     return {"rating": rating, "code_compare": code_compare}
+
 
 
 workflow.add_node("handle_reviewer", handle_reviewer)
@@ -104,10 +78,15 @@ workflow.add_node("handle_result", handle_result)
 
 
 def deployment_ready(state):
+    specialization = state.get("specialization", "").strip()
     deployment_ready = (
         1
         if "yes"
-        in llm(classify_feedback.format(state.get("code"), state.get("feedback")))
+        in llm(
+            prompts[specialization]["classify_feedback"].format(
+                state.get("code"), state.get("feedback")
+            )
+        )
         else 0
     )
     total_iterations = 1 if state.get("iterations") > 5 else 0
@@ -134,12 +113,21 @@ def main():
         "file", type=str, nargs="?", help="Optional file containing the code to review."
     )
     parser.add_argument(
-        "--save", type=str, default=".", help="Directory to save log files."
+        "--save", type=str, default="src/log", help="Directory to save log files."
+    )
+    parser.add_argument(
+        "--specialization",
+        type=str,
+        choices=["python", "typescript", "javascript", "cpp"],
+        default=os.getenv(
+            "DEFAULT_SPECIALIZATION", "python"
+        ),  # Use environment variable if set
+        help="Specialization of the reviewer.",
     )
 
     args = parser.parse_args()
 
-    specialization = "python"
+    specialization = args.specialization
 
     # Load code from file if provided
     if args.file:
@@ -167,10 +155,9 @@ def main():
     logger_setup.log_conversation(history_logger, code_compare_logger, conversation)
 
     # Print conversation parts
-    print("History:\n", conversation["history"])
-    print("Code Comparison:\n", conversation["code_compare"])
-    print("Feedback:\n", conversation.get("feedback"))
-    print("Rating:\n", conversation.get("rating"))
+    print("Feedback:", conversation.get("feedback", ""))
+    # print("Code Comparison:", conversation.get("code_compare", ""))
+    print("Rating:", conversation.get("rating", ""))
 
 
 if __name__ == "__main__":

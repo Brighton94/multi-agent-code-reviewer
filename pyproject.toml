@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "code reviewer"
+version = "0.0.1"
+description = "LangGraph code reviewer"
+authors = ["Brighton Nkomo <bnkomo@csir.co.za>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+langchain = "^0.3.1"
+langgraph="^0.2.34"
+langchain_ollama = "^0.2.0"
+pydantic = "^2.0.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.4.2"
+mypy = "^1.7.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

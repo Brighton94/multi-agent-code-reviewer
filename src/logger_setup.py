@@ -2,22 +2,19 @@
 import os
 import logging
 
-
 def setup_loggers(log_dir):
     os.makedirs(log_dir, exist_ok=True)
 
     history_log_file = os.path.join(log_dir, "history.log")
     code_compare_log_file = os.path.join(log_dir, "code_compare.log")
 
-    logging.basicConfig(level=logging.INFO)
-
-    # Create separate loggers
     history_logger = logging.getLogger("historyLogger")
     code_compare_logger = logging.getLogger("codeCompareLogger")
 
     history_handler = logging.FileHandler(history_log_file)
     code_compare_handler = logging.FileHandler(code_compare_log_file)
 
+    # Configure logging levels
     history_handler.setLevel(logging.INFO)
     code_compare_handler.setLevel(logging.INFO)
 
@@ -34,9 +31,19 @@ def setup_loggers(log_dir):
     history_logger.addHandler(history_handler)
     code_compare_logger.addHandler(code_compare_handler)
 
+    # Avoid propagation to root logger which could print to console
+    history_logger.propagate = False
+    code_compare_logger.propagate = False
+
     return history_logger, code_compare_logger
 
 
 def log_conversation(history_logger, code_compare_logger, conversation):
-    history_logger.info("Conversation History:\n%s", conversation["history"])
-    code_compare_logger.info("Code Comparison:\n%s", conversation["code_compare"])
+    if "feedback" in conversation:
+        history_logger.info("Final Feedback:\n%s", conversation["feedback"])
+
+    if "code_compare" in conversation:
+        code_compare_logger.info("Code Comparison:\n%s", conversation["code_compare"])
+
+    if "rating" in conversation:
+        history_logger.info("Rating:\n%s", conversation["rating"])
