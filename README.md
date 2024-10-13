@@ -18,7 +18,8 @@ This project leverages LangGraph and LangChain to create applications using lang
 
 ### Setting Up the Environment
 
-#### Using Conda
+
+#### Option 1: Using Conda
 
 1. Create a new Conda environment:
 
@@ -31,7 +32,7 @@ This project leverages LangGraph and LangChain to create applications using lang
    conda activate langchain
    ```
 
-#### Using Virtualenv
+#### Option 2: Using Virtualenv
 
 1. Create a virtual environment:
 
@@ -66,9 +67,34 @@ This project uses `pyproject.toml` for dependency management instead of `require
 
 ## Using Ollama Models
 
-### Installing Ollama
+### Installing Ollama and Llama models
 
-To use Ollama models, you need to install the [`ollama`](https://ollama.com/) package. This is already included in the `pyproject.toml`, so it will be installed with the other dependencies.
+To use Ollama models, you need to install the [`ollama`](https://ollama.com/) package. 
+
+1. Install Ollama by running the following command:
+
+    ```sh
+    curl -fsSL https://ollama.com/install.sh | sh
+    ```
+
+2. Verify the installation:
+
+    ```sh
+    ollama --version
+    ```
+
+3. Fetch and use Llama 3.1:
+
+   ```sh
+   ollama run llama3.1
+   ```
+   This fetches the default 8b param model. Once you are done, you can exit with `Ctrl + D`
+
+4. Fetch and use Llama 3.2:
+
+   ```sh
+   ollama run llama3.2
+   ```
 
 ### Using Models `llama3.1:8b` and `llama3.2`
 

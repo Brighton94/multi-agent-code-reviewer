@@ -145,7 +145,7 @@ def main():
         "problem", type=str, help="The problem statement or code to review."
     )
     parser.add_argument(
-        "file", type=str, nargs="?", help="Optional file containing the code to review."
+        "files", type=str, nargs="*", help="Optional files containing the code to review."
     )
     parser.add_argument(
         "--save", type=str, default="src/log", help="Directory to save log files."
@@ -164,13 +164,17 @@ def main():
 
     specialization = args.specialization
 
-    # Load code from file if provided
-    if args.file:
-        with open(args.file, "r") as file:
-            code = file.read()
+    # Combine code from multiple files, clearly marking each file
+    if args.files:
+        code = ""
+        for file in args.files:
+            with open(file, "r") as f:
+                file_content = f.read()
+                code += f"\n// File: {file}\n{file_content}\n"  # Label each file's code
     else:
         code = llm(args.problem)
 
+    # Let LLM know that the code is from separate files
     app = workflow.compile()
     conversation = app.invoke(
         {
