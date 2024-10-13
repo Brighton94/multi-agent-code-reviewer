@@ -185,8 +185,7 @@ def main():
 
     summary = generate_summary(git_changes, style)
 
-    # Print a message to the terminal
-    print("See pop-up window for results.")
+    print("\033[92m✔ See pop-up window for results.\033[0m")
 
     # Display the summary in a ttkbootstrap window
     show_summary_in_ttkbootstrap(summary)

@@ -5,6 +5,9 @@ import os
 import logger_setup
 from prompts import prompts
 from langchain_ollama import ChatOllama
+import ttkbootstrap as ttk
+from tkinter import scrolledtext, Toplevel, INSERT
+
 
 model = ChatOllama(model="llama3.2", temperature=0)
 
@@ -71,7 +74,6 @@ def handle_result(state):
     return {"rating": rating, "code_compare": code_compare}
 
 
-
 workflow.add_node("handle_reviewer", handle_reviewer)
 workflow.add_node("handle_coder", handle_coder)
 workflow.add_node("handle_result", handle_result)
@@ -102,6 +104,39 @@ workflow.add_conditional_edges(
 workflow.set_entry_point("handle_reviewer")
 workflow.add_edge("handle_coder", "handle_reviewer")
 workflow.add_edge("handle_result", END)
+
+
+def show_custom_popup(root):
+    """Create a custom pop-up window with a thumbs-up emoji, centered on the main window."""
+    popup = Toplevel(root)
+    popup.title("Copied!")
+    popup.geometry("300x150")
+
+    # Get the main window's dimensions and position
+    root.update_idletasks()
+    parent_x = root.winfo_x()
+    parent_y = root.winfo_y()
+    parent_width = root.winfo_width()
+    parent_height = root.winfo_height()
+
+    # Calculate the position to center the pop-up relative to the main window
+    popup_x = parent_x + (parent_width // 2) - (300 // 2)
+    popup_y = parent_y + (parent_height // 2) - (150 // 2)
+
+    # Set the popup geometry to the calculated position
+    popup.geometry(f"300x150+{popup_x}+{popup_y}")
+
+    # Create a label with a thumbs-up emoji and text
+    label = ttk.Label(popup, text="Copied to Clipboard! 👍", font=("Arial", 14))
+    label.pack(pady=20)
+
+    # Create an OK button to close the popup
+    ok_button = ttk.Button(popup, text="OK", command=popup.destroy)
+    ok_button.pack(pady=10)
+
+    popup.transient(root)  # Ensure the popup is focused on top
+    popup.grab_set()  # Make the window modal
+    root.wait_window(popup)  # Wait for the popup to close before returning control
 
 
 def main():
@@ -154,10 +189,31 @@ def main():
     # Log conversation history and code comparison
     logger_setup.log_conversation(history_logger, code_compare_logger, conversation)
 
-    # Print conversation parts
-    print("Feedback:", conversation.get("feedback", ""))
-    # print("Code Comparison:", conversation.get("code_compare", ""))
-    print("Rating:", conversation.get("rating", ""))
+    print("\033[92m✔ See pop-up window for results.\033[0m")
+
+    # Create the ttkbootstrap window
+    root = ttk.Window(themename="superhero")
+    root.title("Code Review Summary")
+
+    # Create a scrolled text area to display the summary
+    text_area = scrolledtext.ScrolledText(root, wrap="word", width=80, height=20)
+    text_area.pack(padx=10, pady=10)
+    text_area.insert(INSERT, f"Feedback: {conversation.get('feedback', '')}\n")
+    text_area.insert(INSERT, f"Rating: {conversation.get('rating', '')}\n")
+
+    # Create a button that shows a custom popup
+    copy_button = ttk.Button(root, text="Copy to Clipboard", command=lambda: show_custom_popup(root))
+    copy_button.pack(pady=10)
+
+    # Center the main window
+    root.update_idletasks()
+    width = root.winfo_width()
+    height = root.winfo_height()
+    x = (root.winfo_screenwidth() // 2) - (width // 2)
+    y = (root.winfo_screenheight() // 2) - (height // 2)
+    root.geometry(f'{width}x{height}+{x}+{y}')
+
+    root.mainloop()
 
 
 if __name__ == "__main__":
