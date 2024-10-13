@@ -83,16 +83,7 @@ Expect the review process to take at least 6 minutes. For more complex reviews, 
 
 ### Reviewer
 
-Run the `main.py` script to generate the code review process. You must describe the problem in quotation marks. Optionally you can include a file containing the code to be reviewed. The default specialization of the reviewer is python, you at the moment, you can specify the specialization with this flag `--specialization=python` (`javascript`, `cpp` or `typescript`). Here are some examples of the usage:
-
-```sh
-python src/main.py "How do I create a simple publisher node in ROS2?"
-```
-
-or
-
-```sh
-python src/main.py "Review the cylinder_area function" area_example.py
+Run the `main.py` script to generate the code review process. You must describe the problem in quotation marks. Optionally you can include a file containing the code to be reviewed. The default specialization of the reviewer is python, you at the moment, you can specify the specialization with this flag `--specialization=python` (`javascript`, `cpp` or `typescript`). 
 ```
 
 Include the following lines in your `.bashrc` file with the correct path to `main.py`:
@@ -110,6 +101,17 @@ source ~/.bashrc
 ```
 
 Run `cr --help` for more info.
+
+Here are some examples of the usage:
+
+```sh
+cr "How do I create a simple publisher node in ROS2?"
+```
+
+or
+
+```sh
+cr "Review the cylinder_area function" area_example.py
 
 ### Summarizer
 
