@@ -109,8 +109,7 @@ Expect the review process to take at least 6 minutes. For more complex reviews, 
 
 ### Reviewer
 
-Run the `main.py` script to generate the code review process. You must describe the problem in quotation marks. Optionally you can include a file containing the code to be reviewed. The default specialization of the reviewer is python, you at the moment, you can specify the specialization with this flag `--specialization=python` (`javascript`, `cpp` or `typescript`). 
-```
+Run the `main.py` script to generate the code review process. You must describe the problem in quotation marks. Optionally you can include a file containing the code to be reviewed. The default specialization of the reviewer is python, you at the moment, you can specify the specialization with this flag `--specialization=python` (`javascript`, `cpp` or `typescript`).
 
 Include the following lines in your `.bashrc` file with the correct path to `main.py`:
 
