@@ -137,6 +137,7 @@ or
 
 ```sh
 cr "Review the cylinder_area function" area_example.py
+```
 
 ### Summarizer
 
