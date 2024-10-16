@@ -165,15 +165,10 @@ You just need to be in a git repository and run `mrs` in the terminal.
 **N.B:** These commands do not work inside docker containers. They would need to be echoed in someway.
 
 ## Contributing
-
+Open to contributions of all kinds. Changes, comments and suggestions. 
 
 ## License
 
-For open source projects, say how it is licensed.
-
 ## Project status
 
-
-```
-
-```
+Ongoing project
