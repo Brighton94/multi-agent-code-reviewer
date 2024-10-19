@@ -100,7 +100,7 @@ To use Ollama models, you need to install the [`ollama`](https://ollama.com/) pa
 
 ⚠️ Warning: Performance Impact
 
-<div style="background-color: #FFF3CD; padding: 10px; border-left: 4px solid #FFC107; color: #856404; margin-bottom: 20px;"> Running the `llama3.1:8b` and `llama3.2` models locally using Ollama can significantly slow down your machine due to the high computational requirements. Please ensure that you have sufficient system resources (CPU, GPU, and RAM) available. For more complex reviews, the duration may increase. Consider switching branches to the `gemini-reviewer` or use other cloud-based LLMs for faster performance if this becomes an issue.
+<div style="background-color: #FFF3CD; padding: 10px; border-left: 4px solid #FFC107; color: #856404; margin-bottom: 20px;"> Running the `llama3.1:8b` and `llama3.2` models locally using Ollama can significantly slow down your machine due to the high computational requirements. Please ensure that you have sufficient system resources (CPU, GPU, and RAM) available. For more complex reviews, the duration may increase. Consider switching to cloud-based LLMs for faster performance, if this becomes an issue.
 
 </div>
 
