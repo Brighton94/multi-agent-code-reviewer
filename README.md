@@ -1,12 +1,12 @@
 # AI Code-Reviewer and -Summarizer
 
-This project uses LLMs to summarize Git changes and assist in code reviews.
+This project uses LLMs to summarize Git changes for merge/pull requests and assist in code reviews.
 
 # README
 
 ## Project Overview
 
-This project leverages LangGraph and LangChain to create applications using language models. It includes scripts for generating summaries, running workflows, and more.
+This project leverages LangGraph and LangChain to review code using language models. It includes scripts for generating merge request summaries and more. It currently uses Ollama to run open-source Llama models locally (on-device), for enhanced privacy.
 
 ## Installation
 
