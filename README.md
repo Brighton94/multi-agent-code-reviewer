@@ -1,179 +1,109 @@
-# AI Code-Reviewer and -Summarizer
+# AI Code-Reviewer and Summarizer
 
-This project uses LLMs to summarize Git changes and assist in code reviews.
+This project leverages Large Language Models (LLMs) to summarize Git changes for merge/pull requests and assist in code reviews. You can choose to set up this project either using Conda or Docker, based on your preference.
 
-# README
+## Table of Contents
 
-## Project Overview
+- [Prerequisites](#prerequisites)
+- [Option 1: Conda Installation](#option-1-conda-installation)
+  - [Using the `setup.sh` Bash Script](#using-the-setupsh-bash-script-for-conda)
+- [Option 2: Docker Installation](#option-2-docker-installation)
+  - [Using the `setup.sh` Bash Script](#using-the-setupsh-bash-script-for-docker)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
 
-This project leverages LangGraph and LangChain to create applications using language models. It includes scripts for generating summaries, running workflows, and more.
+## Prerequisites
 
-## Installation
+- [Poetry](https://python-poetry.org/docs/#installation) for dependency management.
+- Python 3.10 or higher.
+- [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html) (optional, for creating isolated environments).
+- [Docker](https://docs.docker.com/get-docker/) (optional, for running the project in a container).
+- Llama models installed locally (e.g., Llama 3.1 or 3.2).
 
-### Prerequisites
+---
 
-- Python 3.10 or higher
-- [Poetry](https://python-poetry.org/docs/#installation) for dependency management
-- [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html) (optional, for creating isolated environments)
+## Option 1: Conda Installation
 
-### Setting Up the Environment
+To install the project in a Conda environment, follow these steps:
 
+### Step 1: Create a Conda Environment
 
-#### Option 1: Using Conda
+```bash
+conda create -n langchain python=3.10
+conda activate langchain
+```
 
-1. Create a new Conda environment:
+### Step 2: Install Dependencies Using Poetry
 
-   ```sh
-   conda create -n langchain python=3.10
-   ```
+1.	Clone the repository:
+```bash
+git clone https://github.com/your-repo/ai-code-reviewer.git
+cd ai-code-reviewer
+```
 
-2. Activate the environment:
-   ```sh
-   conda activate langchain
-   ```
+2.	Install dependencies using Poetry:
+```bash
+poetry install
+```
 
-#### Option 2: Using Virtualenv
+#### Using the setup.sh Bash Script for Conda
 
-1. Create a virtual environment:
+You can also automate the setup process using the provided setup.sh script. This script will install the project dependencies, set up environment variables, and add bash aliases for running the cr (code reviewer) and mrs (merge request summarizer) commands.
 
-   ```sh
-   python -m venv langchain
-   ```
+1.	Ensure you have the necessary permissions to run the script:
+```bash
+chmod +x setup.sh
+```
 
-2. Activate the virtual environment:
-   - On Windows:
-     ```sh
-     .\langchain\Scripts\activate
-     ```
-   - On macOS/Linux:
-     ```sh
-     source langchain/bin/activate
-     ```
+2.	Run the script:
+```bash
+./setup.sh
+```
 
-### Installing Dependencies
+The script will create the Conda environment, install dependencies, and set up bash aliases for cr and mrs.
 
-This project uses `pyproject.toml` for dependency management instead of `requirements.txt`. Follow these steps to install the dependencies:
+## Option 2: Docker Installation
 
-1. Install Poetry:
+You can choose to install and run the project using Docker, which will containerize the entire setup and allow you to run the cr and mrs commands outside the container in any directory.
 
-   ```sh
-   pip install poetry
-   ```
+### Step 1: Build the Docker Image
 
-2. Install the project dependencies:
-   ```sh
-   poetry install
-   ```
+1.	Clone the repository:
+```bash
+git clone https://github.com/your-repo/ai-code-reviewer.git
+cd ai-code-reviewer
+```
 
-## Using Ollama Models
-
-### Installing Ollama and Llama models
-
-To use Ollama models, you need to install the [`ollama`](https://ollama.com/) package. 
-
-1. Install Ollama by running the following command:
-
-    ```sh
-    curl -fsSL https://ollama.com/install.sh | sh
-    ```
-
-2. Verify the installation:
-
-    ```sh
-    ollama --version
-    ```
-
-3. Fetch and use Llama 3.1:
-
-   ```sh
-   ollama run llama3.1
-   ```
-   This fetches the default 8b param model. Once you are done, you can exit with `Ctrl + D`
-
-4. Fetch and use Llama 3.2:
-
-   ```sh
-   ollama run llama3.2
-   ```
-
-### Using Models `llama3.1:8b` and `llama3.2`
-
-⚠️ Warning: Performance Impact
-
-<div style="background-color: #FFF3CD; padding: 10px; border-left: 4px solid #FFC107; color: #856404; margin-bottom: 20px;"> Running the `llama3.1:8b` and `llama3.2` models locally using Ollama can significantly slow down your machine due to the high computational requirements. Please ensure that you have sufficient system resources (CPU, GPU, and RAM) available.
-Expect the review process to take at least 6 minutes. For more complex reviews, the duration may increase. Consider switching branches to the `gemini-reviewer` or use other cloud-based LLMs for faster performance if this becomes an issue.
-
-</div>
+2. Build the Docker image:
+```bash
+docker build -t ai-code-reviewer .
+```
 
 ## Usage
 
-### Reviewer
+### Code Reviewer (cr)
 
-Run the `main.py` script to generate the code review process. You must describe the problem in quotation marks. Optionally you can include a file containing the code to be reviewed. The default specialization of the reviewer is python, you at the moment, you can specify the specialization with this flag `--specialization=python` (`javascript`, `cpp` or `typescript`). 
-```
-
-Include the following lines in your `.bashrc` file with the correct path to `main.py`:
-
-```sh
-export CODE_REVIEWER_PATH="{path_to_main.py}/main.py"
-export DEFAULT_SPECIALIZATION="python"  # Set your default specialization here
-alias cr="python \$CODE_REVIEWER_PATH"
-```
-
-Then run,
-
-```sh
-source ~/.bashrc
-```
-
-Run `cr --help` for more info.
-
-Here are some examples of the usage:
-
-```sh
+The cr command allows you to generate code reviews for various programming languages (e.g., Python, JavaScript, C++). You can run the code reviewer by using the cr alias:
+```bash
 cr "How do I create a simple publisher node in ROS2?"
 ```
 
-or
-
-```sh
-cr "Review the cylinder_area function" area_example.py
-
-### Summarizer
-
-Run the `mr-summarizer.py` script to generate a summary of the Git changes since the last merge request:
-
-```sh
-python src/mr-summarizer.py
+Or, specify a file to review:
+```bash
+cr "Review the cylinder_area function" {path_to_examples}/area_example.py
 ```
 
-You can also add these lines to the `.bashrc` file:
+Note: By default, the specialization is Python. You can change this by adding the flag --specialization=javascript, --specialization=cpp, or --specialization=typescript.
 
-```sh
-export MR_SUMMARIZER_PATH="$HOME/ma-code-reviewer/src/mr-summarizer.py"
-alias mrs="python \$MR_SUMMARIZER_PATH"
+#### Git Summarizer (mrs)
+
+The mrs command generates a summary of the Git changes since the last merge request / pull request. You must be in a Git repository to use this command:
+```bash
+mrs
 ```
-
-After updating the `.bashrc` file, make sure to source it to apply the changes:
-
-```sh
-source ~/.bashrc
-```
-
-You just need to be in a git repository and run `mrs` in the terminal.
-
-**N.B:** These commands do not work inside docker containers. They would need to be echoed in someway.
+This will provide you with a summarized report of the changes in your repository.
 
 ## Contributing
 
-
-## License
-
-For open source projects, say how it is licensed.
-
-## Project status
-
-
-```
-
-```
+Contributions to the project are welcome! Feel free to open issues or submit pull requests for improvements, new features, or bug fixes.
