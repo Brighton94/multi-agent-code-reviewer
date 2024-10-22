@@ -45,21 +45,16 @@ cd ai-code-reviewer
 poetry install
 ```
 
-#### Using the setup.sh Bash Script for Conda
+### Step 3: Set Up Bash Aliases
 
-You can also automate the setup process using the provided setup.sh script. This script will install the project dependencies, set up environment variables, and add bash aliases for running the cr (code reviewer) and mrs (merge request summarizer) commands.
-
-1.	Ensure you have the necessary permissions to run the script:
+To make the cr and mrs commands available in any directory, you need to set up bash aliases that run the corresponding Docker commands. Add the following lines to your .bashrc or .zshrc file:
 ```bash
-chmod +x setup.sh
-```
+# Alias for 'cr' (code reviewer)
+alias cr="python3 {path_to_your_project}/ai-code-reviewer/main.py"
 
-2.	Run the script:
-```bash
-./setup.sh
+# Alias for 'mrs' (git summarizer)
+alias mrs="python3 {path_to_your_project}/ai-code-reviewer/src/mr-summarizer.py"
 ```
-
-The script will create the Conda environment, install dependencies, and set up bash aliases for cr and mrs.
 
 ## Option 2: Docker Installation
 
