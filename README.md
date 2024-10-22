@@ -6,9 +6,7 @@ This project leverages Large Language Models (LLMs) to summarize Git changes for
 
 - [Prerequisites](#prerequisites)
 - [Option 1: Conda Installation](#option-1-conda-installation)
-  - [Using the `setup.sh` Bash Script](#using-the-setupsh-bash-script-for-conda)
 - [Option 2: Docker Installation](#option-2-docker-installation)
-  - [Using the `setup.sh` Bash Script](#using-the-setupsh-bash-script-for-docker)
 - [Usage](#usage)
 - [Contributing](#contributing)
 - [License](#license)
@@ -78,6 +76,16 @@ cd ai-code-reviewer
 2. Build the Docker image:
 ```bash
 docker build -t ai-code-reviewer .
+```
+### Step 2: Set Up Bash Aliases
+
+To make the cr and mrs commands available in any directory, you need to set up bash aliases that run the corresponding Docker commands. Add the following lines to your .bashrc or .zshrc file:
+```bash
+# Alias for 'cr' (code reviewer)
+alias cr="docker run --rm -v \$(pwd):/app -w /app ai-code-reviewer python /app/main.py"
+
+# Alias for 'mrs' (git summarizer)
+alias mrs="docker run --rm -v \$(pwd):/app -w /app ai-code-reviewer python /app/src/mr-summarizer.py"
 ```
 
 ## Usage

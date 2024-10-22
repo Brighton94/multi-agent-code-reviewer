@@ -106,56 +106,46 @@ def show_custom_popup(parent):
     popup.title("Copied!")
     popup.geometry("300x150")
 
-    # Get the main window's dimensions and position
     parent_x = parent.winfo_x()
     parent_y = parent.winfo_y()
     parent_width = parent.winfo_width()
     parent_height = parent.winfo_height()
 
-    # Calculate the position to center the pop-up relative to the main window
     popup_x = parent_x + (parent_width // 2) - (300 // 2)
     popup_y = parent_y + (parent_height // 2) - (150 // 2)
 
-    # Set the popup geometry to the calculated position
     popup.geometry(f"300x150+{popup_x}+{popup_y}")
 
-    # Create a label with a thumbs-up emoji and text
     label = Label(popup, text="Copied to Clipboard! 👍", font=("Arial", 14))
     label.pack(pady=20)
 
-    # Create an OK button to close the popup
     ok_button = Button(popup, text="OK", command=popup.destroy)
     ok_button.pack(pady=10)
 
-    popup.transient(parent)  # Ensure the popup is focused on top of the main window
-    popup.grab_set()  # Make the window modal
-    parent.wait_window(popup)  # Wait for the popup to close before returning control
+    popup.transient(parent)  
+    popup.grab_set() 
+    parent.wait_window(popup)  
 
 
 def show_summary_in_ttkbootstrap(summary: str):
     """Show the generated summary in a ttkbootstrap window, bring it to the front, and center it."""
     def copy_to_clipboard():
-        # Copy the text from the text area to the clipboard
         root.clipboard_clear()
         root.clipboard_append(text_area.get(1.0, INSERT))
         
-        # Show the custom popup with the thumbs-up emoji, centered on the main window
         show_custom_popup(root)
 
     root = Tk()
     root.title("Git Summary")
 
-    # Create a scrolled text area to display the summary
     text_area = scrolledtext.ScrolledText(root, wrap=WORD, width=80, height=20)
     text_area.pack(padx=10, pady=10)
     text_area.insert(INSERT, summary)
 
-    # Create a copy button
     copy_button = Button(root, text="Copy to Clipboard", command=copy_to_clipboard)
     copy_button.pack(pady=10)
 
-    # Center the main window on the screen
-    root.update_idletasks()  # Ensure the window is fully rendered before centering
+    root.update_idletasks()  
     width = root.winfo_width()
     height = root.winfo_height()
     x = (root.winfo_screenwidth() // 2) - (width // 2)
@@ -187,7 +177,6 @@ def main():
 
     print("\033[92m✔ See pop-up window for results.\033[0m")
 
-    # Display the summary in a ttkbootstrap window
     show_summary_in_ttkbootstrap(summary)
 
 
